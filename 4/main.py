@@ -25,7 +25,11 @@ def getGuardId(event):
         if(word[0] == "#"):
             return word[1:]
 
-
+def create_minutes() :
+    minutes = []
+    for i in range(60):
+        minutes.append(0)
+    return minutes
 
 class Event:
     def __init__(self, timestamp, event):
@@ -63,10 +67,7 @@ print(guardSleep)
 max_id = max(guardSleep, key=guardSleep.get)
 print('Max: ' + max_id)
 
-
-minutes = []
-for i in range(60):
-    minutes.append(0)
+guard_minutes = {}
 
 for entry in entries:
     if(isGuardEvent(entry.event)):
@@ -74,19 +75,37 @@ for entry in entries:
     if(isSleepEvent(entry.event)):
         sleepTimeStamp = entry.timestamp
     if(isWakeEvent(entry.event)):
-        if(currentGuard == max_id):
-            for i in range(sleepTimeStamp.minute, entry.timestamp.minute):
-                minutes[i] += 1
+        if(currentGuard not in guard_minutes):
+            guard_minutes[currentGuard] = create_minutes()
+        for i in range(sleepTimeStamp.minute, entry.timestamp.minute):
+            guard_minutes[currentGuard][i] += 1
 
-print(len(minutes))
-print(minutes)
-print(guardSleep[max_id])
+
+
+highest = 1
+highestGuard = None
+for guard in guard_minutes:
+    for minutes in guard:
+        print(minutes)
+        if int(minutes) > int(highest):
+            highest = minutes
+            highestGuard = guard
+
+
+print(highestGuard)
+print(highest)
+
+print(highestGuard * highest)
+
+# print(len(minutes))
+# print(minutes)
+# print(guardSleep[max_id])
 
 index, value = max(enumerate(minutes), key=operator.itemgetter(1))
 
-print(index)
-print(max_id)
-print(index * int(max_id))
+# print(index)
+# print(max_id)
+# print(index * int(max_id))
 
 
 # print(max_id * guardSleep[max_id])
